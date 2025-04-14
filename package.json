@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-pocketify-study-case",
+  "version": "1.0.0",
+  "description": "College Project Year 3",
+  "keywords": [
+    "Savings",
+    "Moneys",
+    "Coins"
+  ],
+  "license": "ISC",
+  "author": "Muhammad Fathurraihan Saputra",
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "prisma": "^6.6.0"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^5.1.0",
+    "joi": "^17.13.3"
+  }
+}

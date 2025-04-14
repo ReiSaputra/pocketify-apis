@@ -1,0 +1,50 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pocketify API",
+    "description": "API for Pocketify",
+    "contact": {
+      "name": "Muhammad Fathurraihan Saputra | Easti Damayanti | Nidzhom Akmal",
+      "url": "https://github.com/pocketify-web-app"
+    },
+    "version": "1.0"
+  },
+  "servers": [{ "url": "https://api.pocketify.com/v1", "description": "Main Server" }],
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Transaction"
+    },
+    {
+      "name": "Category"
+    }
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "responses": {}
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "responses": {}
+      }
+    },
+    "/api/users": {},
+    "/api/users/{id}": {}
+  },
+  "components": {
+    "schemas": {
+      "users": {
+        "type": "object"
+      }
+    }
+  }
+}
