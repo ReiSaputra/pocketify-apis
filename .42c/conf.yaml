@@ -1,0 +1,3 @@
+apis:
+  docs/api.json:
+    alias: pocketify-api
