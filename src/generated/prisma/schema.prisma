@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?  @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(50)
+  token     String?  @db.VarChar(255)
+  point     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  badges     PersonBadge[]
+  pockets    Pocket[]
+  categories CategoriesPerUser[]
+
+  @@map("users")
+}
+
+model Badge {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users PersonBadge[]
+
+  @@map("badges")
+}
+
+model PersonBadge {
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
+
+  badgeId Int   @map("badge_id") @db.Int
+  badge   Badge @relation(fields: [badgeId], references: [id])
+
+  @@id([userId, badgeId])
+  @@map("person_badges")
+}
+
+model Pocket {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(255)
+  balance   Int      @default(0) @db.Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("pockets")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement()) @db.Int
+  name String @db.VarChar(255)
+
+  users CategoriesPerUser[]
+
+  @@map("categories")
+}
+
+model CategoriesPerUser {
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
+
+  categoryId Int      @map("category_id") @db.Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([userId, categoryId])
+}
+
+// model Transaction {
+
+// }
+
+// model Favorite {
+
+// }
