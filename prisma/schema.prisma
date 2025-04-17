@@ -14,3 +14,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id String @id @default(uuid())
+  name String? @db.VarChar(255)
+  email String @unique @db.VarChar(255)
+  password String @db.VarChar(50)
+  token String? @db.VarChar(255)
+  point Int @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  badges PersonBadge[]
+
+  @@map("users")
+}
+
+
+model Badge {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users PersonBadge[]
+
+  @@map("badges")
+}
+
+model PersonBadge {
+  userId String @db.VarChar(255)
+  user User @relation(fields: [userId], references: [id])
+
+  badgeId Int @db.Int
+  badge Badge @relation(fields: [badgeId], references: [id])
+  
+  @@id([userId, badgeId])
+
+  @@map("person_badges")
+}
