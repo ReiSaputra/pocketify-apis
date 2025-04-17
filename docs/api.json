@@ -18,7 +18,7 @@
       "name": "User"
     },
     {
-      "name": "Transaction"
+      "name": "Pockets"
     },
     {
       "name": "Category"
@@ -27,8 +27,8 @@
   "paths": {
     "/api/auth/login": {
       "post": {
-        "summary": "Login API",
-        "description": "Login API for Users",
+        "summary": "User Login",
+        "description": "Allows users to log in using their credentials",
         "tags": ["Auth"],
         "requestBody": {
           "description": "Login request body",
@@ -62,7 +62,7 @@
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "number",
+                      "type": "integer",
                       "description": "Status code",
                       "example": 200
                     },
@@ -77,7 +77,7 @@
                       "properties": {
                         "id": {
                           "type": "string",
-                          "description": "ID of the user (UUID)",
+                          "description": "ID of the user",
                           "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
                         },
                         "name": {
@@ -110,7 +110,7 @@
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "number",
+                      "type": "integer",
                       "description": "Status code",
                       "example": 400
                     },
@@ -134,8 +134,8 @@
     },
     "/api/auth/register": {
       "post": {
-        "summary": "Register API",
-        "description": "Register API for Users",
+        "summary": "User Registration",
+        "description": "Allows new users to register",
         "tags": ["Auth"],
         "requestBody": {
           "description": "Register request body",
@@ -169,7 +169,7 @@
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "number",
+                      "type": "integer",
                       "description": "Status code",
                       "example": 200
                     },
@@ -184,7 +184,7 @@
                       "properties": {
                         "id": {
                           "type": "string",
-                          "description": "ID of the user (UUID)",
+                          "description": "ID of the user",
                           "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
                         },
                         "name": {
@@ -196,11 +196,6 @@
                           "type": "string",
                           "description": "Email of the user",
                           "example": "nVtYh@example.com"
-                        },
-                        "password": {
-                          "type": "string",
-                          "description": "Password of the user",
-                          "example": "password123"
                         }
                       }
                     }
@@ -217,7 +212,7 @@
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "number",
+                      "type": "integer",
                       "description": "Status code",
                       "example": 400
                     },
@@ -239,38 +234,429 @@
         }
       }
     },
-    "/api/users/{id}": {
+    "/api/users/{userId}": {
       "get": {
         "summary": "Get User API",
         "description": "Get User API for Users",
         "tags": ["User"],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user",
+              "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Token of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Token of the user",
+              "example": "token123"
+            }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Get User Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Get existing user success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Data of the response",
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "ID of the user",
+                              "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+                            }
+                          }
+                        },
+                        { "$ref": "#/components/schemas/users" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Get User Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Get existing user failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "description": "Errors type of the response",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Unauthorized"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "description": "Errors type of the response",
+                      "example": "Token not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "patch": {
         "summary": "Update User API",
         "description": "Update User API for Users",
         "tags": ["User"],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user",
+              "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Token of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Token of the user",
+              "example": "token123"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update user request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "ID of the user",
+                    "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the user",
+                    "example": "Fathurraihan Saputra"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Update User Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Update user success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Data of the response",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "ID of the user",
+                          "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the user",
+                          "example": "Fathurraihan Saputra"
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "Email of the user",
+                          "example": "nVtYh@example.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Update User Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Update user failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "description": "Errors type of the response",
+                      "example": "Max length of name is 255 characters"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Unauthorized"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "description": "Errors type of the response",
+                      "example": "Token not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "delete": {
         "summary": "Delete User API",
         "description": "Delete User API for Users",
         "tags": ["User"],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user",
+              "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Token of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Token of the user",
+              "example": "token123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete User Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Delete user token success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status code",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message of the response",
+                      "example": "Unauthorized"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "description": "Errors type of the response",
+                      "example": "Token not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/users/{id}/transactions": {
+    "/api/users/{userId}/pockets": {
       "get": {
-        "summary": "Get Transactions API",
-        "description": "Get Transactions API for Users",
-        "tags": ["Transaction"],
-        "responses": {}
+        "summary": "Get Pockets API",
+        "description": "Get Pockets API for Users",
+        "tags": ["Pockets"],
+        "responses": {
+          "200": {
+            "description": "Get Pockets Success"
+          }
+        }
       },
       "post": {
         "summary": "Create Transaction API",
         "description": "Create Transaction API for Users",
-        "tags": ["Transaction"],
-        "responses": {}
+        "tags": ["Pockets"],
+        "responses": {
+          "200": {
+            "description": "Create Transaction Success"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/pockets/{pocketId}": {
+      "get": {
+        "summary": "Get Pocket API",
+        "tags": ["Pockets"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "pocketId",
+            "in": "path",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Pocket Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Get Pocket Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -292,6 +678,13 @@
             "example": "password123"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
