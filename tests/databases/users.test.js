@@ -84,8 +84,15 @@ describe("When creating users", () => {
           },
         },
         pockets: {
-          create: {
-            name: "Goal 1",
+          createMany: {
+            data: [
+              {
+                name: "Pocket 1",
+              },
+              {
+                name: "Pocket 2",
+              },
+            ],
           },
         },
         badges: {
@@ -100,16 +107,138 @@ describe("When creating users", () => {
         point: 100,
       },
       include: {
-        badges: true,
-        categories: true,
+        badges: {
+          include: {
+            badge: true,
+          },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
         pockets: true,
-      }
+      },
+    });
+
+    console.info(JSON.stringify(result));
+
+    expect(result).toMatchObject({
+      name: "Easti Damayanti",
+      email: "easti.damayanti@gmail.com",
+      password: "123456",
+      point: 100,
+    });
+  });
+
+  it("should be able to find one user", async () => {
+    const result = await prisma.user.findUnique({
+      where: {
+        email: "easti.damayanti@gmail.com",
+      },
+      include: {
+        badges: {
+          include: {
+            badge: true,
+          },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        pockets: true,
+      },
+    });
+
+    console.info(JSON.stringify(result));
+
+    expect(result).toMatchObject({
+      name: "Easti Damayanti",
+      email: "easti.damayanti@gmail.com",
+      password: "123456",
+      point: 100,
+    });
+  });
+
+  it("should be able to find many users", async () => {
+    const result = await prisma.user.findMany({
+      include: {
+        badges: {
+          include: {
+            badge: true,
+          },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        pockets: true,
+      },
     });
 
     console.info(result);
   });
 
-  it("should be able to find one user", async () => {
-    const result = await prisma.user.findU
-  })
+  it("should be able to update one user", async () => {
+    const result = await prisma.user.update({
+      where: {
+        email: "easti.damayanti@gmail.com",
+      },
+      data: {
+        email: "eastId@gmail.com",
+      },
+    });
+
+    console.info(result);
+
+    expect(result).toMatchObject({
+      email: "eastId@gmail.com",
+    });
+  });
+
+  it.failing("should not be able to delete one user", async () => {
+    const result = await prisma.user.delete({
+      where: {
+        email: "eastId@gmail.com",
+      },
+    });
+
+    console.info(result);
+  });
+
+  it("should be able to delete one user", async () => {
+    const result1 = await prisma.personBadge.deleteMany({
+      where: {
+        user: {
+          email: "eastId@gmail.com",
+        },
+      },
+    });
+
+    const result2 = await prisma.pocket.deleteMany({
+      where: {
+        user: {
+          email: "eastId@gmail.com",
+        },
+      },
+    });
+
+    const result3 = await prisma.categoriesPerUser.deleteMany({
+      where: {
+        user: {
+          email: "eastId@gmail.com",
+        },
+      },
+    });
+
+    const result4 = await prisma.user.delete({
+      where: {
+        email: "eastId@gmail.com",
+      },
+    });
+
+    console.info(result4);
+  });
 });

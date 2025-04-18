@@ -33,8 +33,13 @@ model User {
 }
 
 model Badge {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
+  id String @id @db.VarChar(255)
+  name String @db.VarChar(255) @unique
+  description String @db.VarChar(255)
+  icon String @db.VarChar(255) @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   users PersonBadge[]
 
@@ -45,7 +50,7 @@ model PersonBadge {
   userId String @db.VarChar(255) @map("user_id")
   user User @relation(fields: [userId], references: [id])
 
-  badgeId Int @db.Int @map("badge_id")
+  badgeId String @db.VarChar(255) @map("badge_id")
   badge Badge @relation(fields: [badgeId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
