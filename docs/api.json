@@ -296,7 +296,40 @@
                             }
                           }
                         },
-                        { "$ref": "#/components/schemas/users" }
+                        { "$ref": "#/components/schemas/users" },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "point": {
+                              "type": "integer",
+                              "description": "Point of the user",
+                              "example": 100
+                            },
+                            "badges": {
+                              "type": "array",
+                              "description": "Badges of the user",
+                              "items": {
+                                "type": "string",
+                                "description": "Name of the badge"
+                              },
+                              "example": ["Badge 1", "Badge 2"]
+                            },
+                            "pockets": {
+                              "type": "array",
+                              "description": "Pockets of the user",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "description": "ID of the pocket",
+                                    "example": "18c167b1-ca36-47f7-aa13-dad809094cab"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
                       ]
                     }
                   }

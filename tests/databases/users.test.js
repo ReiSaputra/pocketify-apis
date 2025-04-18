@@ -71,8 +71,8 @@ describe("When creating users", () => {
   it("should be able to create one user with relations", async () => {
     const result = await prisma.user.create({
       data: {
-        name: "Nona Damayanti",
-        email: "nona.damayanti@gmail.com",
+        name: "Easti Damayanti",
+        email: "easti.damayanti@gmail.com",
         password: "123456",
         categories: {
           create: {
@@ -108,4 +108,8 @@ describe("When creating users", () => {
 
     console.info(result);
   });
+
+  it("should be able to find one user", async () => {
+    const result = await prisma.user.findU
+  })
 });
