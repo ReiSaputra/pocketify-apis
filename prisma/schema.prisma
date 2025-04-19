@@ -18,7 +18,7 @@ model User {
   id String @id @default(uuid())
   name String? @db.VarChar(255)
   email String @unique @db.VarChar(255)
-  password String @db.VarChar(50)
+  password String @db.VarChar(255)
   token String? @db.VarChar(255)
   point Int @default(0)
 
@@ -72,7 +72,29 @@ model Pocket {
   userId String @db.VarChar(255) @map("user_id")
   user User @relation(fields: [userId], references: [id])
 
+  pocketHistoryId String? @db.VarChar(255) @map("pocket_history_id")
+  pocketHistories PocketHistory[]
+
   @@map("pockets")
+}
+
+model PocketHistory {
+  id String @id @default(uuid())
+  amount Int @db.Int
+  type TransactionType
+  description String? @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  pocketId String @db.VarChar(255) @map("pocket_id")
+  pocket Pocket @relation(fields: [pocketId], references: [id])
+
+  @@map("pocket_histories")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
 
 model Category {
