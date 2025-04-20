@@ -28,6 +28,7 @@ model User {
   badges PersonBadge[]
   pockets Pocket[]
   categories CategoriesPerUser[]
+  achievement Achievement?
 
   @@map("users")
 }
@@ -61,6 +62,21 @@ model PersonBadge {
   @@map("person_badges")
 }
 
+model Achievement {
+  id String @id @db.VarChar(255)
+  name String @db.VarChar(255) @unique
+  description String @db.VarChar(255)
+  icon String @db.VarChar(255) @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId String @db.VarChar(255) @map("user_id") @unique
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("achievements")
+}
+
 model Pocket {
   id String @id @default(uuid())
   name String @db.VarChar(255)
@@ -72,7 +88,6 @@ model Pocket {
   userId String @db.VarChar(255) @map("user_id")
   user User @relation(fields: [userId], references: [id])
 
-  pocketHistoryId String? @db.VarChar(255) @map("pocket_history_id")
   pocketHistories PocketHistory[]
 
   @@map("pockets")

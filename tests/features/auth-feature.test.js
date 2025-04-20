@@ -141,4 +141,17 @@ describe("when a new user wants to register", () => {
   });
 });
 
-describe("when a user wants to login", () => {});
+describe("when a user wants to login", () => {
+  it.todo("should be able to login");
+  it.todo("should not be able to login with wrong email and password");
+  it.todo("should not be able to login with wrong email");
+  it.todo("should not be able to login with wrong password");
+  it.todo("should not be able to login without email and password");
+  it.todo("should not be able to login without email");
+  it.todo("should not be able to login without password");
+  it.todo("should not be able to login with not valid email (not email)");
+  it.todo("should not be able to login with not valid email (just '')");
+  it.todo("should not be able to login with not valid password (min length)");
+  it.todo("should not be able to login with not valid password (max length)");
+  it.todo("should not be able to login with not valid password (just '')");
+});

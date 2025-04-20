@@ -1,4 +1,4 @@
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "../generated/prisma/client.js";
 
 const errorMiddleware = (err, req, res, next) => {
   if (err instanceof Prisma.PrismaClientInitializationError) {
