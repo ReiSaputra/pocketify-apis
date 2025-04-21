@@ -1,4 +1,4 @@
-import { userLoginService, userRegisterService } from "../services/users-service.js";
+import { userLoginService, userRegisterService, userDashboardService, userLogoutService } from "../services/users-service.js";
 
 const userRegisterController = async (req, res, next) => {
   try {
@@ -7,6 +7,7 @@ const userRegisterController = async (req, res, next) => {
     next(error);
   }
 };
+
 const userLoginController = async (req, res, next) => {
   try {
     await userLoginService(req, res, next);
@@ -15,4 +16,18 @@ const userLoginController = async (req, res, next) => {
   }
 };
 
-export { userLoginController, userRegisterController };
+const userDashboardController = async (req, res, next) => {
+  try {
+    await userDashboardService(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const userLogoutController = async (req, res, next) => {
+  try {
+    await userLoginService(req, res, next);
+  } catch (error) {}
+};
+
+export { userLoginController, userRegisterController, userDashboardController, userLogoutController };

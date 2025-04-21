@@ -1,4 +1,4 @@
-import { validate } from "../validations/validate.js";
+import { validate, errorValidate } from "../validations/validate.js";
 import { userSchema } from "../validations/users-validation.js";
 import { prisma } from "../database.js";
 import bcrypt from "bcrypt";
@@ -6,6 +6,7 @@ import { createHmac } from "crypto";
 import dotenv from "dotenv";
 
 dotenv.config();
+
 const userRegisterService = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -19,9 +20,7 @@ const userRegisterService = async (req, res, next) => {
     });
 
     if (findUser) {
-      const error = new Error("User already exists");
-      error.status = 409;
-      return next(error);
+      errorValidate("User already exists", 400);
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -61,17 +60,13 @@ const userLoginService = async (req, res, next) => {
     });
 
     if (!findUser) {
-      const error = new Error("Invalid email or password");
-      error.status = 400;
-      return next(error);
+      errorValidate("Invalid email or password", 400);
     }
 
     const checkPassword = await bcrypt.compare(password, findUser.password);
 
     if (!checkPassword) {
-      const error = new Error("Invalid email or password");
-      error.status = 400;
-      return next(error);
+      errorValidate("Invalid email or password", 400);
     }
 
     const payload = {
@@ -104,4 +99,14 @@ const userLoginService = async (req, res, next) => {
   }
 };
 
-export { userLoginService, userRegisterService };
+const userDashboardService = async (req, res, next) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+};
+
+const userLogoutService = async (req, res, next) => {};
+
+export { userLoginService, userRegisterService, userDashboardService, userLogoutService };
