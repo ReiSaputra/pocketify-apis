@@ -1,16 +1,15 @@
 import { describe, expect, it, beforeAll, afterAll } from "@jest/globals";
 import app from "../../src/index.js";
 import supertest from "supertest";
-import { prisma } from "../../src/database.js";
+import { deleteTables, disconnectDatabase } from "../helpers/helpers.js";
 
 describe("when a new user wants to register", () => {
   beforeAll(async () => {
-    await prisma.categoriesPerUser.deleteMany();
-    await prisma.personBadge.deleteMany();
-    await prisma.badge.deleteMany();
-    await prisma.category.deleteMany();
-    await prisma.pocket.deleteMany();
-    await prisma.user.deleteMany();
+    await deleteTables();
+  });
+
+  afterAll(async () => {
+    await disconnectDatabase();
   });
 
   it("should be able to create one user", async () => {
@@ -26,6 +25,7 @@ describe("when a new user wants to register", () => {
       message: "Register Success",
       data: {
         id: expect.any(String),
+        name: expect.any(String),
         email: "fathurraihan@gmail.com",
       },
     });
@@ -154,6 +154,10 @@ describe("when a new user wants to register", () => {
 });
 
 describe("when a user wants to login", () => {
+  afterAll(async () => {
+    await disconnectDatabase();
+  });
+
   it("should be able to login", async () => {
     const response = await supertest(app).post("/api/auth/login").send({
       email: "fathurraihan@gmail.com",
@@ -168,6 +172,7 @@ describe("when a user wants to login", () => {
       message: "Login Success",
       data: {
         id: expect.any(String),
+        name: expect.any(String),
         email: "fathurraihan@gmail.com",
         token: expect.any(String),
       },
@@ -325,7 +330,7 @@ describe("when a user wants to login", () => {
     const response = await supertest(app).post("/api/auth/login").send({
       email: "fathurraihan@gmail.com",
       password: "",
-    }); 
+    });
 
     console.info(response.body);
 

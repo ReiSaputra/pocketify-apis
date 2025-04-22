@@ -10,7 +10,7 @@ const authMiddleware = async (req, res, next) => {
       errorValidate("Unauthorized", 401);
     }
 
-    const findTokenAndId = await prisma.user.findUnique({
+    const findTokenAndId = await prisma.user.findFirst({
       where: {
         AND: [
           {
