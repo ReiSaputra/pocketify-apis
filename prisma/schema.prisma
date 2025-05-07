@@ -14,3 +14,132 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id String @id @default(uuid())
+  name String? @db.VarChar(255)
+  email String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
+  token String? @db.VarChar(255)
+  point Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  badges PersonBadge[]
+  pockets Pocket[]
+  categories CategoriesPerUser[]
+  achievement Achievement?
+
+  @@map("users")
+}
+
+model Badge {
+  id String @id @db.VarChar(255)
+  name String @db.VarChar(255) @unique
+  description String @db.VarChar(255)
+  icon String @db.VarChar(255) @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users PersonBadge[]
+
+  @@map("badges")
+}
+
+model PersonBadge {
+  userId String @db.VarChar(255) @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  badgeId String @db.VarChar(255) @map("badge_id")
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@id([userId, badgeId])
+
+  @@map("person_badges")
+}
+
+model Achievement {
+  id String @id @db.VarChar(255)
+  name String @db.VarChar(255) @unique
+  description String @db.VarChar(255)
+  icon String @db.VarChar(255) @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId String @db.VarChar(255) @map("user_id") @unique
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("achievements")
+}
+
+model Pocket {
+  id String @id @default(uuid())
+  name String @db.VarChar(255)
+  balance Int @db.Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId String @db.VarChar(255) @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  pocketHistories PocketHistory[]
+
+  @@map("pockets")
+}
+
+model PocketHistory {
+  id String @id @default(uuid())
+  amount Int @db.Int
+  type TransactionType
+  description String? @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  pocketId String @db.VarChar(255) @map("pocket_id")
+  pocket Pocket @relation(fields: [pocketId], references: [id])
+
+  @@map("pocket_histories")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Category {
+  id Int @id @db.Int @default(autoincrement())
+  name String @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users CategoriesPerUser[]
+
+  @@map("categories")
+}
+
+model CategoriesPerUser {
+  userId String @db.VarChar(255) @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  categoryId Int @db.Int @map("category_id")
+  category Category @relation(fields: [categoryId], references: [id]) 
+
+  @@id([userId, categoryId])
+
+  @@map("categories_per_user")
+}
+
+// model Transaction {
+
+// }
+
+// model Favorite {
+
+// }
