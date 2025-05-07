@@ -77,7 +77,13 @@ describe("when a user wants to access dashboard", () => {
     const userId = loginResponse.body.data.id;
 
     const dashboardResponse = await supertest(app).get(`/api/users/${userId}/dashboard`).set("Authorization", `Bearer ${loginResponse.body.data.token}`);
-
-    console.info(dashboardResponse.body);
   });
+
+  it.todo("should not be able to access dashboard without authorization headers and without userId");
+  it.todo("should not be able to access dashboard without authorization headers but with correct userId");
+  it.todo("should not be able to access dashboard with wrong authorization value but with correct userId");
+  it.todo("should not be able to access dashboard if the token is valid but belongs to a different user");
+  it.todo("should not be able to access dashboard if the token is expired");
+  it.todo("should not be able to access dashboard if the user does not exist");
+  it.todo("should return 500 Internal Server Error if something goes wrong in the server");
 });

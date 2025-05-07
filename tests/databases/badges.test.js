@@ -1,14 +1,10 @@
 import { beforeAll, describe, expect, it } from "@jest/globals";
 import { prisma } from "../../src/database.js";
+import { deleteTables } from "../helpers/helpers.js";
 
 describe("When creating badges", () => {
   beforeAll(async () => {
-    await prisma.personBadge.deleteMany();
-    await prisma.categoriesPerUser.deleteMany();
-    await prisma.pocket.deleteMany();
-    await prisma.badge.deleteMany();
-    await prisma.category.deleteMany();
-    await prisma.user.deleteMany();
+    await deleteTables();
   });
 
   it("should be able to create one badge", async () => {
