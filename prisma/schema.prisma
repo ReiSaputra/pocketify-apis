@@ -28,7 +28,7 @@ model User {
   badges PersonBadge[]
   pockets Pocket[]
   categories CategoriesPerUser[]
-  achievement Achievement?
+  favorites Favorite[]
 
   @@map("users")
 }
@@ -62,25 +62,13 @@ model PersonBadge {
   @@map("person_badges")
 }
 
-model Achievement {
-  id String @id @db.VarChar(255)
-  name String @db.VarChar(255) @unique
-  description String @db.VarChar(255)
-  icon String @db.VarChar(255) @unique
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  userId String @db.VarChar(255) @map("user_id") @unique
-  user User @relation(fields: [userId], references: [id])
-
-  @@map("achievements")
-}
-
 model Pocket {
   id String @id @default(uuid())
   name String @db.VarChar(255)
+  description String? @db.LongText
   balance Int @db.Int @default(0)
+  targetDate DateTime @default(now()) @map("target_date")
+  type PocketType
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -89,6 +77,7 @@ model Pocket {
   user User @relation(fields: [userId], references: [id])
 
   pocketHistories PocketHistory[]
+  favorites Favorite[]
 
   @@map("pockets")
 }
@@ -110,6 +99,14 @@ model PocketHistory {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum PocketType {
+  RECREATION
+  EMERGENCY_FUND
+  EDUCATION
+  INVESTMENT
+  OTHER
 }
 
 model Category {
@@ -136,10 +133,14 @@ model CategoriesPerUser {
   @@map("categories_per_user")
 }
 
-// model Transaction {
+model Favorite {
+  userId String @db.VarChar(255) @map("user_id")
+  user User @relation(fields: [userId], references: [id])
 
-// }
+  pocketId String @db.VarChar(255) @map("pocket_id")
+  pocket Pocket @relation(fields: [pocketId], references: [id])
 
-// model Favorite {
+  @@id([userId, pocketId])
 
-// }
+  @@map("favorites")
+}

@@ -5,11 +5,12 @@ const deleteTables = async () => {
   await prisma.personBadge.deleteMany();
   await prisma.badge.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.pocketHistory.deleteMany();
   await prisma.pocket.deleteMany();
   await prisma.user.deleteMany();
 };
 
-const createBadges = async () =>{
+const createBadges = async () => {
   return await prisma.badge.createMany({
     data: [
       {
@@ -74,10 +75,20 @@ const createBadges = async () =>{
       },
     ],
   });
-}
+};
+
+const createUsers = async () => {
+  return await prisma.user.create({
+    data: {
+      name: "Madonna Kim",
+      email: "kimad4@gmail.com",
+      password: "1234567",
+    },
+  });
+};
 
 const disconnectDatabase = async () => {
   await prisma.$disconnect();
 };
 
-export { deleteTables, createBadges, disconnectDatabase };
+export { deleteTables, createBadges, disconnectDatabase, createUsers };
