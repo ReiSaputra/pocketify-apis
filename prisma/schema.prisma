@@ -29,6 +29,7 @@ model User {
   pockets Pocket[]
   categories CategoriesPerUser[]
   favorites Favorite[]
+  notification Notification[]
 
   @@map("users")
 }
@@ -143,4 +144,24 @@ model Favorite {
   @@id([userId, pocketId])
 
   @@map("favorites")
+}
+
+model Notification {
+  id String @id @default(uuid())
+  title String @db.VarChar(255)
+  description String? @db.VarChar(255)
+  type NotificationType
+  isReaded Boolean @default(false) @map("is_readed")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userId String? @db.VarChar(255) @map("user_id")
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  PUBLIC
+  PRIVATE
 }

@@ -86,10 +86,19 @@ const createUserPocketService = async (req, res, next) => {
       },
     });
 
+    const createNotification = await prisma.notification.create({
+      data: {
+        title: `Create ${name} Pocket Success`,
+        description: `You have created ${name} Pocket. It's time to start saving your money!`,
+        userId: userId,
+        type: "PRIVATE",
+      },
+    });
+
     return res.status(201).json({
       status: 201,
-      message: "Create Pocket Success",
-      data: createPocket,
+      message: "Create Pocket & Notification Success",
+      data: { createPocket, createNotification },
     });
   } catch (error) {
     return next(error);

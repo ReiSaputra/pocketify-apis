@@ -10,6 +10,10 @@ describe("when a user wants to access pockets page", () => {
     await createBadges();
   });
 
+  afterAll(async () => {
+    await deleteTables();
+  });
+
   it("should be able to access pockets page and get data", async () => {
     const registerResponse = await supertest(app).post("/api/auth/register").send({
       email: "yukato@gmail.com",
