@@ -15,30 +15,30 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  name String? @db.VarChar(255)
-  email String @unique @db.VarChar(255)
-  password String @db.VarChar(255)
-  token String? @db.VarChar(255)
-  point Int @default(0)
+  id       String  @id @default(uuid())
+  name     String? @db.VarChar(255)
+  email    String  @unique @db.VarChar(255)
+  password String  @db.VarChar(255)
+  token    String? @db.VarChar(255)
+  point    Int     @default(0)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  badges PersonBadge[]
-  pockets Pocket[]
-  categories CategoriesPerUser[]
-  favorites Favorite[]
+  badges       PersonBadge[]
+  pockets      Pocket[]
+  categories   CategoriesPerUser[]
+  favorites    Favorite[]
   notification Notification[]
 
   @@map("users")
 }
 
 model Badge {
-  id String @id @db.VarChar(255)
-  name String @db.VarChar(255) @unique
+  id          String @id @db.VarChar(255)
+  name        String @unique @db.VarChar(255)
   description String @db.VarChar(255)
-  icon String @db.VarChar(255) @unique
+  icon        String @unique @db.VarChar(255)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -49,50 +49,50 @@ model Badge {
 }
 
 model PersonBadge {
-  userId String @db.VarChar(255) @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
 
-  badgeId String @db.VarChar(255) @map("badge_id")
-  badge Badge @relation(fields: [badgeId], references: [id])
+  badgeId String @map("badge_id") @db.VarChar(255)
+  badge   Badge  @relation(fields: [badgeId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  
-  @@id([userId, badgeId])
 
+  @@id([userId, badgeId])
   @@map("person_badges")
 }
 
 model Pocket {
-  id String @id @default(uuid())
-  name String @db.VarChar(255)
-  description String? @db.LongText
-  balance Int @db.Int @default(0)
-  targetDate DateTime @default(now()) @map("target_date")
-  type PocketType
+  id           String     @id @default(uuid())
+  name         String     @db.VarChar(255)
+  description  String?    @db.LongText
+  balance      Int        @default(0) @db.Int
+  targetSaving Int        @default(0) @db.Int
+  targetDate   DateTime   @default(now()) @map("target_date")
+  type         PocketType
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  userId String @db.VarChar(255) @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
 
   pocketHistories PocketHistory[]
-  favorites Favorite[]
+  favorites       Favorite[]
 
   @@map("pockets")
 }
 
 model PocketHistory {
-  id String @id @default(uuid())
-  amount Int @db.Int
-  type TransactionType
-  description String? @db.VarChar(255)
+  id          String          @id @default(uuid())
+  amount      Int             @db.Int
+  type        TransactionType
+  description String?         @db.VarChar(255)
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  pocketId String @db.VarChar(255) @map("pocket_id")
-  pocket Pocket @relation(fields: [pocketId], references: [id])
+  pocketId String @map("pocket_id") @db.VarChar(255)
+  pocket   Pocket @relation(fields: [pocketId], references: [id])
 
   @@map("pocket_histories")
 }
@@ -103,15 +103,19 @@ enum TransactionType {
 }
 
 enum PocketType {
-  RECREATION
-  EMERGENCY_FUND
+  EMERGENCY
+  TRAVEL
   EDUCATION
+  CELEBRATION
   INVESTMENT
+  RECREATION
+  GIFT
+  SHOPPING
   OTHER
 }
 
 model Category {
-  id Int @id @db.Int @default(autoincrement())
+  id   Int    @id @default(autoincrement()) @db.Int
   name String @db.VarChar(255)
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -123,40 +127,38 @@ model Category {
 }
 
 model CategoriesPerUser {
-  userId String @db.VarChar(255) @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
 
-  categoryId Int @db.Int @map("category_id")
-  category Category @relation(fields: [categoryId], references: [id]) 
+  categoryId Int      @map("category_id") @db.Int
+  category   Category @relation(fields: [categoryId], references: [id])
 
   @@id([userId, categoryId])
-
   @@map("categories_per_user")
 }
 
 model Favorite {
-  userId String @db.VarChar(255) @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id") @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [id])
 
-  pocketId String @db.VarChar(255) @map("pocket_id")
-  pocket Pocket @relation(fields: [pocketId], references: [id])
+  pocketId String @map("pocket_id") @db.VarChar(255)
+  pocket   Pocket @relation(fields: [pocketId], references: [id])
 
   @@id([userId, pocketId])
-
   @@map("favorites")
 }
 
 model Notification {
-  id String @id @default(uuid())
-  title String @db.VarChar(255)
-  description String? @db.VarChar(255)
-  type NotificationType
-  isReaded Boolean @default(false) @map("is_readed")
+  id          String           @id @default(uuid())
+  title       String           @db.VarChar(255)
+  description String?          @db.VarChar(255)
+  type        NotificationType
+  isReaded    Boolean          @default(false) @map("is_readed")
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  userId String? @db.VarChar(255) @map("user_id")
-  user User? @relation(fields: [userId], references: [id])
+  userId String? @map("user_id") @db.VarChar(255)
+  user   User?   @relation(fields: [userId], references: [id])
 
   @@map("notifications")
 }

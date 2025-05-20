@@ -71,7 +71,7 @@ const getUserPocketsService = async (req, res, next) => {
 
 const createUserPocketService = async (req, res, next) => {
   const userId = req.params.userId;
-  const { name, description, balance, targetDate } = req.body;
+  const { name, currentBalance, targetSaving, targetDate, type } = req.body;
 
   validate(pocketSchema, req.body);
 
@@ -79,10 +79,11 @@ const createUserPocketService = async (req, res, next) => {
     const createPocket = await prisma.pocket.create({
       data: {
         name: name,
-        description: description,
-        balance: balance,
-        targetDate: targetDate,
+        balance: currentBalance,
+        targetSaving: targetSaving,
+        targetDate: new Date(targetDate),
         userId: userId,
+        type: type,
       },
     });
 
@@ -107,7 +108,7 @@ const createUserPocketService = async (req, res, next) => {
 
 const postUserPocketService = async (req, res, next) => {
   const userId = req.params.userId;
-  const { name, description, balance, targetDate } = req.body;
+  const { name, balance, targetDate, type } = req.body;
 
   validate(pocketSchema, req.body);
 
@@ -115,9 +116,9 @@ const postUserPocketService = async (req, res, next) => {
     const createPocket = await prisma.pocket.create({
       data: {
         name: name,
-        description: description,
         balance: balance,
         targetDate: targetDate,
+        type: type,
         userId: userId,
       },
     });
@@ -131,6 +132,43 @@ const postUserPocketService = async (req, res, next) => {
     return next(error);
   }
 };
+
+const depositPocketService = async (req, res, next) => {
+  const userId = req.params.userId;
+  const pocketId = req.params.pocketId;
+
+  const { balance } = req.body;
+
+  try {
+    const updateNomineePocket = await prisma.pocket.update({
+      where: {
+        AND: [
+          {
+            id: pocketId,
+          },
+          {
+            userId: userId,
+          },
+        ],
+      },
+      data: {
+        balance: {
+          increment: balance,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      status: 200,
+      message: "Deposit Pocket Success",
+      data: updateNomineePocket,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const withdrawPocketService = async (req, res, next) => {};
 
 const getUserDetailPocketService = async (req, res, next) => {
   const userId = req.params.userId;
